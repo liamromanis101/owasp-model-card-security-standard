@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owasp.org/www-project-model-card-security-standard/schema/model-card-schema.json",
+  "title": "OWASP Model Card Security Standard",
+  "description": "Machine-readable schema for the OWASP Model Card Security Standard v0.1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "model",
+    "intended_use",
+    "training_data",
+    "security"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of the OWASP Model Card Security Standard schema used",
+      "example": "0.1"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this model card was last updated (YYYY-MM-DD)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "review", "approved"],
+      "description": "Publication status of this model card"
+    },
+    "model": {
+      "type": "object",
+      "required": ["name", "version", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the model"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version identifier for the model"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of model",
+          "examples": ["LLM", "classifier", "embedding", "generative-image", "time-series"]
+        },
+        "languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Primary languages supported"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Organisation or individual responsible for the model"
+        },
+        "contact": {
+          "type": "string",
+          "description": "Contact email or URL for security disclosures"
+        },
+        "model_card_authors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names of those who authored this model card"
+        }
+      }
+    },
+    "intended_use": {
+      "type": "object",
+      "required": ["primary_use"],
+      "properties": {
+        "primary_use": {
+          "type": "string",
+          "description": "Primary intended use case for this model"
+        },
+        "intended_users": {
+          "type": "string",
+          "description": "Description of the intended user base"
+        },
+        "out_of_scope_uses": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicitly out-of-scope use cases"
+        }
+      }
+    },
+    "training_data": {
+      "type": "object",
+      "required": ["pii_assessment"],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "licence": { "type": "string" },
+              "date_range_start": { "type": "string", "format": "date" },
+              "date_range_end": { "type": "string", "format": "date" }
+            }
+          }
+        },
+        "data_cutoff_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date beyond which no training data was included"
+        },
+        "collection_method": {
+          "type": "string",
+          "description": "How the training data was collected",
+          "examples": ["web crawl", "licensed dataset", "synthetic", "crowd-sourced"]
+        },
+        "consent_confirmed": {
+          "type": "string",
+          "enum": ["yes", "no", "partial", "not_applicable"],
+          "description": "Whether consent and licensing has been confirmed for all data sources"
+        },
+        "pii_assessment": {
+          "type": "object",
+          "required": ["scan_performed", "residual_risk"],
+          "properties": {
+            "scan_performed": {
+              "type": "string",
+              "enum": ["yes", "no", "partial"],
+              "description": "Whether a PII scan was performed on training data"
+            },
+            "tools_used": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Tools used for PII detection",
+              "examples": ["Microsoft Presidio", "scrubadub", "manual review"]
+            },
+            "pii_types_identified": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Types of PII identified during scanning"
+            },
+            "removal_method": {
+              "type": "string",
+              "description": "Method used to remove or anonymise identified PII"
+            },
+            "residual_risk": {
+              "type": "string",
+              "enum": ["none", "low", "medium", "high", "unknown"],
+              "description": "Assessed residual PII risk after cleaning"
+            },
+            "residual_risk_justification": {
+              "type": "string",
+              "description": "Explanation of residual risk assessment"
+            }
+          }
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "base_model": { "type": "string" },
+        "base_model_source": { "type": "string", "format": "uri" },
+        "training_framework": { "type": "string" },
+        "hardware": { "type": "string" },
+        "training_compute": { "type": "string" }
+      }
+    },
+    "security": {
+      "type": "object",
+      "required": ["adversarial_testing"],
+      "properties": {
+        "known_vulnerabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "description", "severity", "status"],
+            "properties": {
+              "id": { "type": "string" },
+              "description": { "type": "string" },
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low", "informational"]
+              },
+              "status": {
+                "type": "string",
+                "enum": ["open", "mitigated", "resolved", "accepted"]
+              },
+              "reference": { "type": "string" }
+            }
+          }
+        },
+        "adversarial_testing": {
+          "type": "object",
+          "required": ["performed"],
+          "properties": {
+            "performed": { "type": "boolean" },
+            "methodology": { "type": "string" },
+            "scope": { "type": "string" },
+            "results_summary": { "type": "string" },
+            "full_report_url": { "type": "string" }
+          }
+        },
+        "output_filtering": {
+          "type": "object",
+          "properties": {
+            "in_place": { "type": "boolean" },
+            "method": { "type": "string" },
+            "known_bypass_risks": { "type": "string" }
+          }
+        }
+      }
+    },
+    "supply_chain": {
+      "type": "object",
+      "properties": {
+        "base_model_name": { "type": "string" },
+        "base_model_source": { "type": "string", "format": "uri" },
+        "base_model_licence": { "type": "string" },
+        "dependencies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dependency_audit_performed": { "type": "boolean" },
+        "dependency_audit_date": { "type": "string", "format": "date" },
+        "sbom_available": { "type": "boolean" },
+        "sbom_url": { "type": "string" }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "recommended_contexts": { "type": "string" },
+        "restrictions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "recommended_controls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "examples": [
+              "input_validation",
+              "output_filtering",
+              "rate_limiting",
+              "audit_logging",
+              "human_review"
+            ]
+          }
+        }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "properties": {
+        "eu_ai_act_risk_tier": {
+          "type": "string",
+          "enum": ["unacceptable", "high", "limited", "minimal"],
+          "description": "EU AI Act risk classification"
+        },
+        "gdpr_considerations": { "type": "string" },
+        "ccpa_considerations": { "type": "string" },
+        "other_regulations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "framework": { "type": "string" },
+              "status": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "incident_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "description", "severity"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "description": { "type": "string" },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "resolution": { "type": "string" }
+        }
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "changes"],
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "author": { "type": "string" },
+          "changes": { "type": "string" }
+        }
+      }
+    }
+  }
+}
