@@ -67,7 +67,7 @@ This is a simplified excerpt. The full schema covers additional fields for incid
 /
 ├── README.md                          ← you are here
 ├── standard/
-│   └── model-card-security-standard.md   ← the specification
+│   └── OWASP-Modelcard-Standard-Proposal.md   ← the specification
 ├── templates/
 │   └── model-card-template.md            ← blank template to copy and fill in
 ├── examples/
